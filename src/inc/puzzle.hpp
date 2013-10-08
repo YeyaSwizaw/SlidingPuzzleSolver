@@ -13,12 +13,16 @@ SP_NS
 template<int gridSize>
 class Puzzle {
 public:
+	Puzzle<gridSize>();
+
 	void randomize(int moves = 3 * gridSize * gridSize);
 
 	void printCurrentState();
 
 private:
-	State<gridSize> currentState;
+	std::vector<State<gridSize>> stateVect;
+
+	State<gridSize>* currentState;
 
 }; // class Puzzle;
 

@@ -13,7 +13,9 @@ enum Action {
 	GAP_UP,
 	GAP_DOWN,
 	GAP_LEFT,
-	GAP_RIGHT
+	GAP_RIGHT,
+
+	NONE
 
 }; // enum Action;
 
@@ -23,10 +25,14 @@ public:
 	static const int gapVal = gridSize * gridSize - 1;
 
 	State();
-	State(State prev, Action action);
+	State(State<gridSize>* prev, Action action);
+
+	void applyAction(Action action);
 
 	bool operator==(State<gridSize> rhs);
 
+	State<gridSize> *parentState;
+	Action actionUsed;
 	int puzzleGrid[gridSize][gridSize], gapx, gapy;
 
 	std::string toString();

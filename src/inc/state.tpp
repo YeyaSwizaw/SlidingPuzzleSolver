@@ -3,7 +3,9 @@
 
 template<int gridSize>
 State<gridSize>::State()
-	: gapx(gridSize - 1), gapy(gridSize - 1) {
+	: actionUsed(NONE), gapx(gridSize - 1), gapy(gridSize - 1) {
+
+	parentState = NULL;
 
 	for(int y = 0; y < gridSize; ++y) {
 		for(int x = 0; x < gridSize; ++x) {
@@ -16,24 +18,33 @@ State<gridSize>::State()
 } // State<gridSize>::State();
 
 template<int gridSize>
-State<gridSize>::State(State prev, Action action) {
+State<gridSize>::State(State<gridSize>* prev, Action action) {
+	parentState = prev;
+	actionUsed = action;
+
 	for(int y = 0; y < gridSize; ++y) {
 		for(int x = 0; x < gridSize; ++x) {
-			puzzleGrid[y][x] = prev.puzzleGrid[y][x];
+			puzzleGrid[y][x] = prev->puzzleGrid[y][x];
 
 		} // for(int x = 0; x < gridSize; ++x);
 
 	} // for(int y = 0; y < gridSize; ++y);
 
-	gapx = prev.gapx;
-	gapy = prev.gapy;
+	gapx = prev->gapx;
+	gapy = prev->gapy;
 
+	applyAction(action);
+
+} // State<gridSize>::State(State<gridSize>* prev, Action action);
+
+template<int gridSize>
+void State<gridSize>::applyAction(Action action) {
 	switch(action) {
 		case GAP_UP:
 			if(gapy == 0) {
 				break;
 
-			} // if(prev.gapy == 0);
+			} // if(prev->gapy == 0);
 
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy - 1][gapx];
 			puzzleGrid[gapy - 1][gapx] = gapVal;
@@ -79,7 +90,7 @@ State<gridSize>::State(State prev, Action action) {
 
 	} // switch(action);
 
-} // State<gridSize>::State(State prev, Action action);
+} // void State<gridSize>::applyAction(Action action);
 
 template<int gridSize>
 bool State<gridSize>::operator==(State<gridSize> rhs) {

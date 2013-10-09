@@ -4,9 +4,11 @@
 #include "defines.hpp"
 #include "state.hpp"
 
+#include <algorithm>
 #include <ctime>
 #include <iostream>
 #include <random>
+#include <queue>
 
 SP_NS
 
@@ -16,13 +18,20 @@ public:
 	Puzzle<gridSize>();
 
 	void randomize(int moves = 3 * gridSize * gridSize);
+	void solve();
 
 	void printCurrentState();
 
 private:
-	std::vector<State<gridSize>> stateVect;
+	std::vector<State<gridSize>*> stateVect;
+
+	std::deque<State<gridSize>*> stateQueue;
+	std::vector<State<gridSize>*> checkedStates;
 
 	State<gridSize>* currentState;
+	State<gridSize> goalState;
+
+	bool solveStep();
 
 }; // class Puzzle;
 

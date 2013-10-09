@@ -3,7 +3,8 @@
 
 template<int gridSize>
 State<gridSize>::State()
-	: actionUsed(NONE), gapx(gridSize - 1), gapy(gridSize - 1) {
+	: id(nextId++), actionUsed(NONE), gapx(gridSize - 1), gapy(gridSize - 1),
+	  pathCost(0), heuristic(0) {
 
 	parentState = NULL;
 
@@ -18,9 +19,13 @@ State<gridSize>::State()
 } // State<gridSize>::State();
 
 template<int gridSize>
-State<gridSize>::State(State<gridSize>* prev, Action action) {
+State<gridSize>::State(State<gridSize>* prev, Action action)
+	: id(nextId++) {
+
 	parentState = prev;
 	actionUsed = action;
+
+	pathCost = prev->pathCost++;
 
 	for(int y = 0; y < gridSize; ++y) {
 		for(int x = 0; x < gridSize; ++x) {
@@ -48,6 +53,9 @@ void State<gridSize>::applyAction(Action action) {
 
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy - 1][gapx];
 			puzzleGrid[gapy - 1][gapx] = gapVal;
+
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+
 			--gapy;
 
 			break;
@@ -60,6 +68,9 @@ void State<gridSize>::applyAction(Action action) {
 
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy + 1][gapx];
 			puzzleGrid[gapy + 1][gapx] = gapVal;
+
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+
 			++gapy;
 
 			break;
@@ -72,6 +83,9 @@ void State<gridSize>::applyAction(Action action) {
 
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy][gapx - 1];
 			puzzleGrid[gapy][gapx - 1] = gapVal;
+
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+
 			--gapx;
 
 			break;
@@ -84,6 +98,9 @@ void State<gridSize>::applyAction(Action action) {
 
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy][gapx + 1];
 			puzzleGrid[gapy][gapx + 1] = gapVal;
+
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+
 			++gapx;
 
 			break;
@@ -91,6 +108,17 @@ void State<gridSize>::applyAction(Action action) {
 	} // switch(action);
 
 } // void State<gridSize>::applyAction(Action action);
+
+template<int gridSize>
+void State<gridSize>::calcHeuristic(int num, int x, int y) {
+	++num;
+
+	int goalX = (gridSize % num) - 1;
+	int goalY = ceil((float)gridSize / (float)num) - 1;
+
+	heuristic = abs(x - goalX) + abs(y - goalY);
+
+} // void State<gridSize>::calcHeuristic(int num, int x, int y);
 
 template<int gridSize>
 bool State<gridSize>::operator==(State<gridSize> rhs) {
@@ -112,6 +140,13 @@ bool State<gridSize>::operator==(State<gridSize> rhs) {
 template<int gridSize>
 std::string State<gridSize>::toString() {
 	std::stringstream sstream;
+
+	if(parentState) {
+		sstream << parentState->id << "->";
+
+	} // if(parentState);
+
+	sstream << id << ":" << std::endl;
 
 	for(int y = 0; y < gridSize; ++y) {
 		for(int x = 0; x < gridSize; ++x) {

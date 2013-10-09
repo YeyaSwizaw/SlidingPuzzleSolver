@@ -3,6 +3,7 @@
 
 #include "defines.hpp"
 
+#include <cmath>
 #include <array>
 #include <string>
 #include <sstream>
@@ -24,10 +25,15 @@ class State {
 public:
 	static const int gapVal = gridSize * gridSize - 1;
 
+	static int nextId;
+	int id;
+
 	State();
 	State(State<gridSize>* prev, Action action);
 
 	void applyAction(Action action);
+
+	void calcHeuristic(int num, int x, int y);
 
 	bool operator==(State<gridSize> rhs);
 
@@ -35,9 +41,23 @@ public:
 	Action actionUsed;
 	int puzzleGrid[gridSize][gridSize], gapx, gapy;
 
+	int pathCost, heuristic;
+
 	std::string toString();
 
 }; // class State;
+
+template<int gridSize>
+struct HeuristicCheck {
+	bool operator()(State<gridSize>* lhs, State<gridSize>* rhs) {
+		return (lhs->heuristic + lhs->pathCost) < (rhs->heuristic + rhs->pathCost);
+
+	} // bool operator()(State<gridSize>* lhs, State<gridSize>* rhs);
+
+}; // struct heuristicCheck<gridSize>;
+
+template<int gridSize>
+int State<gridSize>::nextId = 0;
 
 #include "state.tpp"
 

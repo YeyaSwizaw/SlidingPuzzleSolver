@@ -54,7 +54,7 @@ void State<gridSize>::applyAction(Action action) {
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy - 1][gapx];
 			puzzleGrid[gapy - 1][gapx] = gapVal;
 
-			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy, gapx, gapy - 1);
 
 			--gapy;
 
@@ -69,7 +69,7 @@ void State<gridSize>::applyAction(Action action) {
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy + 1][gapx];
 			puzzleGrid[gapy + 1][gapx] = gapVal;
 
-			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy, gapx, gapy + 1);
 
 			++gapy;
 
@@ -84,7 +84,7 @@ void State<gridSize>::applyAction(Action action) {
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy][gapx - 1];
 			puzzleGrid[gapy][gapx - 1] = gapVal;
 
-			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy, gapx - 1, gapy);
 
 			--gapx;
 
@@ -99,7 +99,7 @@ void State<gridSize>::applyAction(Action action) {
 			puzzleGrid[gapy][gapx] = puzzleGrid[gapy][gapx + 1];
 			puzzleGrid[gapy][gapx + 1] = gapVal;
 
-			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy);
+			calcHeuristic(puzzleGrid[gapy][gapx], gapx, gapy, gapx + 1, gapy);
 
 			++gapx;
 
@@ -110,13 +110,13 @@ void State<gridSize>::applyAction(Action action) {
 } // void State<gridSize>::applyAction(Action action);
 
 template<int gridSize>
-void State<gridSize>::calcHeuristic(int num, int x, int y) {
+void State<gridSize>::calcHeuristic(int num, int x1, int y1, int x2, int y2) {
 	int goalX = (num > 0) ? (num % gridSize) : 0;
 	int goalY = (num > 0) ? (num / gridSize) : 0;
 
 	// std::cout << num << ": (" << x << " - " << goalX << ") + (" << y << " - " << goalY << ")" << std::endl;
 
-	heuristic = abs(goalX - x) + abs(goalY - y);
+	heuristic = (abs(goalX - x1) - abs(goalX - x2)) + (abs(goalY - y1) - abs(goalY - y2)) + 1;
 
 } // void State<gridSize>::calcHeuristic(int num, int x, int y);
 

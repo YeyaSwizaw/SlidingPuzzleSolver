@@ -34,7 +34,7 @@ public:
 
 	void applyAction(Action action);
 
-	void calcHeuristic(int num, int x, int y);
+	void calcHeuristic(int num, int x1, int y1, int x2, int y2);
 
 	bool operator==(State<gridSize> rhs);
 

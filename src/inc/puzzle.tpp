@@ -34,61 +34,62 @@ void Puzzle<gridSize>::randomize(int moves) {
 
 template<int gridSize>
 bool Puzzle<gridSize>::solveStep() {
-	stateVect.push_back(currentState);
+	while(true) {
+		stateVect.push_back(currentState);
 
-	if(*currentState == goalState) {
-		return true;
+		if(*currentState == goalState) {
+			return true;
 
-	} // if(*currentState == goalState);
+		} // if(*currentState == goalState);
 
-	for(int i = 0; i < 4; ++i) {
-		State<gridSize>* newState = new State<gridSize>(currentState, (Action)i);
-		if(!(*currentState == *newState)) {
-			bool checked = false;
-			bool inQueue = false;
-			for(State<gridSize>* s : checkedStates) {
-				if(*newState == *s) {
-					checked = true;
-					break;
-
-				} // if(*newState == *s);
-
-			} // for(State<gridSize>* s : checkedStates);
-
-			if(!checked) {
-				for(State<gridSize>* s : stateVect) {
+		for(int i = 0; i < 4; ++i) {
+			State<gridSize>* newState = new State<gridSize>(currentState, (Action)i);
+			if(!(*currentState == *newState)) {
+				bool checked = false;
+				bool inQueue = false;
+				for(State<gridSize>* s : checkedStates) {
 					if(*newState == *s) {
-						inQueue = true;
-
-						if(newState->pathCost < s->pathCost) {
-							s = newState;
-
-						} // if(newState->pathCost < s->pathCost);
-
+						checked = true;
 						break;
 
 					} // if(*newState == *s);
 
-				} // for(State<gridSize>* s : stateQueue);
+				} // for(State<gridSize>* s : checkedStates);
 
-				if(!inQueue) {
-					stateQueue.push_back(newState);
+				if(!checked) {
+					for(State<gridSize>* s : stateVect) {
+						if(*newState == *s) {
+							inQueue = true;
 
-				} // if(!inQueue);
+							if(newState->pathCost < s->pathCost) {
+								s = newState;
 
-			} // if(!checked);
+							} // if(newState->pathCost < s->pathCost);
 
-		} // if(!(*currentState == newState));
+							break;
 
-	} // for(int i = 0; i < 4; ++i);
+						} // if(*newState == *s);
 
-	// std::sort(stateQueue.begin(), stateQueue.end(), HeuristicCheck<gridSize>());
-	currentState = stateQueue.front();
-	stateQueue.pop_front();
+					} // for(State<gridSize>* s : stateQueue);
+
+					if(!inQueue) {
+						stateQueue.push_back(newState);
+
+					} // if(!inQueue);
 	
-	// std::cout << currentState->toString() << std::endl;
+				} // if(!checked);
 
-	return solveStep();
+			} // if(!(*currentState == newState));
+
+		} // for(int i = 0; i < 4; ++i);
+
+		std::sort(stateQueue.begin(), stateQueue.end(), HeuristicCheck<gridSize>());
+		currentState = stateQueue.front();
+		stateQueue.pop_front();
+	
+		// std::cout << currentState->toString() << std::endl;
+
+	} // while(true);
 
 } // bool Puzzle<gridSize>::solveStep();
 

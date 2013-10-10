@@ -34,7 +34,7 @@ void Puzzle<gridSize>::randomize(int moves) {
 
 template<int gridSize>
 bool Puzzle<gridSize>::solveStep() {
-	checkedStates.push_back(currentState);
+	stateVect.push_back(currentState);
 
 	if(*currentState == goalState) {
 		return true;
@@ -44,8 +44,6 @@ bool Puzzle<gridSize>::solveStep() {
 	for(int i = 0; i < 4; ++i) {
 		State<gridSize>* newState = new State<gridSize>(currentState, (Action)i);
 		if(!(*currentState == *newState)) {
-			stateVect.push_back(newState);
-
 			bool checked = false;
 			bool inQueue = false;
 			for(State<gridSize>* s : checkedStates) {
@@ -58,7 +56,7 @@ bool Puzzle<gridSize>::solveStep() {
 			} // for(State<gridSize>* s : checkedStates);
 
 			if(!checked) {
-				for(State<gridSize>* s : stateQueue) {
+				for(State<gridSize>* s : stateVect) {
 					if(*newState == *s) {
 						inQueue = true;
 
@@ -84,12 +82,11 @@ bool Puzzle<gridSize>::solveStep() {
 
 	} // for(int i = 0; i < 4; ++i);
 
-
-	std::sort(stateQueue.begin(), stateQueue.end(), HeuristicCheck<gridSize>());
+	// std::sort(stateQueue.begin(), stateQueue.end(), HeuristicCheck<gridSize>());
 	currentState = stateQueue.front();
 	stateQueue.pop_front();
 	
-	std::cout << currentState->toString() << std::endl;
+	// std::cout << currentState->toString() << std::endl;
 
 	return solveStep();
 
@@ -99,11 +96,29 @@ template<int gridSize>
 void Puzzle<gridSize>::solve() {
 	solveStep();
 
-	std::cout << "Solved!";
+	std::cout << "Solved!" << std::endl;
+
+	std::deque<State<gridSize>*> path;
+
+	while(true) {
+		path.push_front(currentState);
+		if(currentState->parentState) {
+			currentState = currentState->parentState;
+
+		} // if(currentState->parentState);
+		else {
+			break;
+
+		} // else;
+
+	} // while(true);
+
+	for(State<gridSize>* s : path) {
+		std::cout << s->toString() << std::endl;
+
+	} // for(State<gridSize>* s : path);
 
 } // void Puzzle<gridSize>::solve();
-
-
 
 template<int gridSize>
 void Puzzle<gridSize>::printCurrentState() {

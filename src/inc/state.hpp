@@ -7,6 +7,7 @@
 #include <array>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 SP_NS
 

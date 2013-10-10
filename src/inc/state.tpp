@@ -25,7 +25,7 @@ State<gridSize>::State(State<gridSize>* prev, Action action)
 	parentState = prev;
 	actionUsed = action;
 
-	pathCost = prev->pathCost++;
+	pathCost = prev->pathCost + 1;
 
 	for(int y = 0; y < gridSize; ++y) {
 		for(int x = 0; x < gridSize; ++x) {
@@ -111,12 +111,12 @@ void State<gridSize>::applyAction(Action action) {
 
 template<int gridSize>
 void State<gridSize>::calcHeuristic(int num, int x, int y) {
-	++num;
+	int goalX = (num > 0) ? (num % gridSize) : 0;
+	int goalY = (num > 0) ? (num / gridSize) : 0;
 
-	int goalX = (gridSize % num) - 1;
-	int goalY = ceil((float)gridSize / (float)num) - 1;
+	// std::cout << num << ": (" << x << " - " << goalX << ") + (" << y << " - " << goalY << ")" << std::endl;
 
-	heuristic = abs(x - goalX) + abs(y - goalY);
+	heuristic = abs(goalX - x) + abs(goalY - y);
 
 } // void State<gridSize>::calcHeuristic(int num, int x, int y);
 
@@ -146,7 +146,7 @@ std::string State<gridSize>::toString() {
 
 	} // if(parentState);
 
-	sstream << id << ":" << std::endl;
+	sstream << id << "(" << pathCost << " + " << heuristic << "):" << std::endl;
 
 	for(int y = 0; y < gridSize; ++y) {
 		for(int x = 0; x < gridSize; ++x) {

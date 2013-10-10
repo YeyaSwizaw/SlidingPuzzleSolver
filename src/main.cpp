@@ -3,7 +3,7 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
-	sp::Puzzle<3> puzzle;
+	sp::Puzzle<4> puzzle;
 
 	std::cout << "Goal State:" << std::endl;
 	puzzle.printCurrentState();
@@ -11,6 +11,7 @@ int main(int argc, char* argv[]) {
 	std::cout << std::endl << "Initial State:" << std::endl;
 	puzzle.randomize();
 	puzzle.printCurrentState();
+	std::cout << std::endl;
 
 	puzzle.solve();
 
